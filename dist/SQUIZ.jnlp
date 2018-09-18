@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="SQUIZ.jnlp">
+  <information>
+    <title>SQUIZ</title>
+    <vendor>Divyanshu</vendor>
+    <description>null</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="SQUIZ.jar" size="17539" download="eager" />
+    <jar href="lib\c3p0-0.9.1-pre6.jar" size="531005" download="eager" />
+    <jar href="lib\charm-glisten-4.4.1-javadoc.jar" size="2817088" download="eager" />
+    <jar href="lib\charm-glisten-4.4.1.jar" size="1040787" download="eager" />
+    <jar href="lib\jboss-common-jdbc-wrapper-src.jar" size="35342" download="eager" />
+    <jar href="lib\jboss-common-jdbc-wrapper.jar" size="50184" download="eager" />
+    <jar href="lib\mysql-connector-java-8.0.12.jar" size="2020431" download="eager" />
+    <jar href="lib\protobuf-java-2.6.0.jar" size="593799" download="eager" />
+    <jar href="lib\slf4j-api-1.6.1.jar" size="25496" download="eager" />
+  </resources>
+  <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="SQUIZ" >
+    <param name="requiredFXVersion" value="8.0+"/>
+  </applet-desc>
+  <jfx:javafx-desc  width="800" height="600" main-class="squiz.SquizMain"  name="SQUIZ" />
+  <update check="always"/>
+</jnlp>
