@@ -2,14 +2,19 @@
 package DBManagement;
 
 import java.sql.*;
-
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import java.io.*;
+import javafx.scene.Scene;
+import teacher.TeacherOptionController;
 
 
 public class DatabaseTransaction {
     
-    private static Connection conn=null;
-    private static  String connString ="jdbc:mysql://localhost:3306/squiz";
-    private static  ResultSet rs= null;
+    private static  Connection conn=null;
+    private  static String connString ="jdbc:mysql://localhost:3306/squiz";
+    private  static ResultSet rs= null;
+    
 public static void registerUser(String firstname, String lastname, String email, String password, String user) 
 {  
    
@@ -41,7 +46,7 @@ public static void registerUser(String firstname, String lastname, String email,
        
 }
 
-public static void signinUser(String email, String password, String user){
+public static int  signinUser(String email, String password, String user)throws IOException{
     
     try {
     conn = DriverManager.getConnection(connString,"root","root");
@@ -53,8 +58,11 @@ public static void signinUser(String email, String password, String user){
    rs = ps.executeQuery();
  
 
-      if(rs.next()==true) 
+      if(rs.next()==true) {
+          
        System.out.println("LOGIN SUCCESSFUL");
+       return 1;
+      }
       else 
        System.out.println("LOGIN UNSUCCESSFUL");
 
@@ -65,6 +73,7 @@ public static void signinUser(String email, String password, String user){
         System.out.println("Error in Signup");
     }  
     
+   return 0; 
 }
 
 

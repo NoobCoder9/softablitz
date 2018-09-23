@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ButtonBar?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="720.0" prefWidth="1080.0" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teacher.TeacherEditController">
+   <children>
+      <VBox layoutY="3.0" prefHeight="720.0" prefWidth="1080.0">
+         <children>
+            <Label prefHeight="43.0" prefWidth="908.0" text="Label" />
+            <Label text="Enter Subject:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField onAction="#entertextfieldSubject" />
+            <Label text="Enter Quiz Name:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField onAction="#entertextfieldQuizName" />
+            <Label text="Enter Section:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField onAction="#entertextfieldSection" />
+            <Label text="Enter New Time:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField onAction="#entertextfieldTime" />
+            <Label text="Enter Question Number:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextField onAction="#entertextfieldQuesNo" />
+            <Label text="Enter New Question:">
+               <font>
+                  <Font size="15.0" />
+               </font>
+            </Label>
+            <TextArea fx:id="textareaQues" prefHeight="159.0" prefWidth="908.0" />
+            <Label text="Option1:" />
+            <TextField onAction="#entertextfieldOp1" />
+            <Label text="Option2:" />
+            <TextField onAction="#entertextfieldOp2" />
+            <Label text="Option3:" />
+            <TextField onAction="#entertextfieldOp3" />
+            <Label text="Option4:" />
+            <TextField onAction="#entertextfieldOp4" />
+            <Label text="Right Answer:" />
+            <TextField onAction="#entertextfieldAnswer" />
+            <ButtonBar prefHeight="40.0" prefWidth="200.0">
+              <buttons>
+                <Button mnemonicParsing="false" onAction="#pressedSaveContbutton" text="Save And Continue" />
+                  <Button mnemonicParsing="false" onAction="#pressedSaveExitbutton" text="Save And Exit" />
+              </buttons>
+            </ButtonBar>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

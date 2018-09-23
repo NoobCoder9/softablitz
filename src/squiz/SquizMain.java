@@ -16,6 +16,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+
 /**
  *
  * @author Divyanshu
@@ -32,8 +33,8 @@ public class SquizMain extends Application {
       Scene scene = new Scene(root,1080,720);
       primaryStage.setScene(scene);
       primaryStage.setTitle("SQUIZ");
-      primaryStage.initStyle(StageStyle.UNDECORATED);
-      MouseMovement.getMouseMovement(root, primaryStage);
+      //primaryStage.initStyle(StageStyle.UNDECORATED);
+      //MouseMovement.getMouseMovement(root, primaryStage);
       primaryStage.show();
       
       }
