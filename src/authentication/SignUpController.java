@@ -5,7 +5,6 @@
  */
 package authentication;
 
-import DBManagement.DatabaseTransaction;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -26,17 +25,18 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import teacher.TeacherOptionController;
+import static resources.Constant.RESULT_OK;
+import student.StudentDashboardController;
+import teacher.TeacherDashboardController;
 
-/**
- *
- * @author Divyanshu
- */
+
 public class SignUpController implements Initializable {
-   
- private String user="" ;     
-//Anchor pane
-@FXML private AnchorPane ap;
+    
+    private Authentication auth;
+    private String user="" ;  
+    private int resultCode;
+    //Anchor pane
+ @FXML private AnchorPane ap;
 @FXML AnchorPane signUp;
 @FXML AnchorPane signIn;
 @FXML Button abtnSignin ;
@@ -60,7 +60,7 @@ public class SignUpController implements Initializable {
 @FXML CheckBox cbsiStudent;
 
     /**
-     *
+     *AnchorPane signIn button FOR UI CHANGES
      */
     public void signInCalled(){
     abtnSignin.setStyle("-fx-background-color:  #aa00ff;-fx-font: 20 arial; ");
@@ -71,7 +71,7 @@ public class SignUpController implements Initializable {
 }
 
     /**
-     *
+     *FOR UI CHANGES
      */
     public void signUpCalled(){
     
@@ -81,56 +81,88 @@ public class SignUpController implements Initializable {
         signIn.setVisible(false);
         
 }
-
+    
+    
+    
     /**
      *Register the user
      */
     public void registerNewUser(){
-    System.out.println(user);
-    DatabaseTransaction.registerUser(firstName.getText().trim(), lastName.getText().trim(), suEmail.getText().trim(), suPassword.getText(),user );
+        
+       auth = new Authentication();
+        System.out.println(user);
+        resultCode = auth.signUpUser(firstName.getText().trim(), lastName.getText().trim(), suEmail.getText().trim(), suPassword.getText(),user );
+        if (resultCode==RESULT_OK){
+             // IF user signup coorectly all went well
+             System.out.println("Sign UP DONE!!!!");
+             resultCode=0;
+             signInCalled();
+             
+        }else{
+            //  ERROR IN SIGN UP 
+            System.out.println("ERROR IN SIGNUP  registerNewUser!!!!");
+        }
+        auth.close();
+        
 }
 
+    
+    
     /**
      *
      * @param e
+     * Sign In user
      */
-    public void signInUser(ActionEvent e){
+    public void signInUser(ActionEvent e) throws IOException {
    
-   int res=1;
-     try {
-       // int res =  DatabaseTransaction.signinUser(siEmail.getText().trim(),  siPassword.getText(), user );
-        if(res==1&& user.equals("teacher") ){
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("/teacher/TeacherOption.fxml"));
-            Parent teacherRoot = loader.load();
-            Scene scene = new Scene(teacherRoot,1080,720);
-            TeacherOptionController controller = loader.getController();
-            controller.receiveData("hello", "  hello");
-            
-            Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
-            
-            
-            //Stage stage = new Stage();
-            
-            stage.setScene(scene);
-            
-            stage.show();
-            //closeUI();
-        }
+           auth = new Authentication();
+           resultCode=  auth.signInUser(siEmail.getText().trim(),  siPassword.getText(), user );
+          System.out.println(resultCode+user);
+           if(resultCode==RESULT_OK && user.equals("student")){
+                        /// System.out.println(resultCode);
+                        
+                        FXMLLoader loader = new FXMLLoader();
+                        loader.setLocation(getClass().getResource("/student/StudentDashboard.fxml"));
+                        Parent studentRoot = loader.load();
+                        Scene scene = new Scene(studentRoot);     
+                        StudentDashboardController sDashboard = loader.getController();
+                        sDashboard.recieveEmail(siEmail.getText().trim());
+                       //Stage stage =(Stage)((Node)e.getSource()).getScene().getWindow();
+                        Stage stage = new Stage();
+                        stage.setScene(scene);
+                        stage.show();
+                        closeUI();
+                        auth.close();
+           }
+           else if(resultCode == RESULT_OK && user.equals("teacher")){
+                        System.out.println("done");
+                        FXMLLoader loader = new FXMLLoader();
+                        loader.setLocation(getClass().getResource("/teacher/TeacherDashboard.fxml"));
+                          System.out.println("done");
+                        Parent teacherRoot = loader.load();
+                          System.out.println("done");
+                        Scene scene = new Scene(teacherRoot);     
+                          System.out.println("done");
+                        TeacherDashboardController tDashboard = loader.getController();
+                          System.out.println("done");
+                        tDashboard.receiveEmail(siEmail.getText().trim());
+                          System.out.println("done");
+                       //Stage stage =(Stage)((Node)e.getSource()).getScene().getWindow();
+                         System.out.println("done");
+                        Stage stage = new Stage();
+                        stage.setScene(scene);
+                        stage.show();
+                        closeUI();
+                        auth.close();
+               }
+ }
         
-        
-        
-        
-        
-        
-     } catch (IOException ex) {
-         System.out.println("error in signin");
-     }
-}
-
-    /**
-     *
-     */
+    
+    
+    
+  /**
+    *Closes the Stage
+    */
     public void closeUI(){
     
 Stage stage = (Stage) ap.getScene().getWindow();
@@ -160,21 +192,19 @@ stage.close();
     @Override
     public void initialize(URL url, ResourceBundle rb) {
       
-        
-          cbsuTeacher.setOnAction(e -> buttonControl(cbsuStudent , btnSignup));
-          cbsuStudent.setOnAction(e -> buttonControl(cbsuTeacher , btnSignup));
-          cbsiTeacher.setOnAction(e -> buttonControl(cbsiStudent , btnSignin));
-          cbsiStudent.setOnAction(e -> buttonControl(cbsiTeacher , btnSignin));
+             //auth = new Authentication();
+              cbsuTeacher.setOnAction(e -> buttonControl(cbsuStudent , btnSignup));
+             cbsuStudent.setOnAction(e -> buttonControl(cbsuTeacher , btnSignup));
+             cbsiTeacher.setOnAction(e -> buttonControl(cbsiStudent , btnSignin));
+              cbsiStudent.setOnAction(e -> buttonControl(cbsiTeacher , btnSignin));
       
         
-        signUp.setVisible(true);
-        signIn.setVisible(false);
+            signUp.setVisible(true);
+            signIn.setVisible(false);
         
-        abtnSignin.setOnAction(e -> signInCalled());
-          abtnSignup.setOnAction(e -> signUpCalled());       
-         close.setOnMousePressed(e -> closeUI());
-          btnSignup.setOnAction(e  -> registerNewUser());
-          btnSignin.setOnAction( e -> signInUser(e));
-        }    
-    
+             abtnSignin.setOnAction(e -> signInCalled());
+             abtnSignup.setOnAction(e -> signUpCalled());       
+             close.setOnMousePressed(e -> closeUI());
+              btnSignup.setOnAction(e  -> registerNewUser());
+}
 }

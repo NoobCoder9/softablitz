@@ -8,11 +8,11 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #4E004E;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="student.StudentSelectQuizController">
+<AnchorPane id="AnchorPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="720.0" prefWidth="1080.0" style="-fx-background-color: #4E004E;" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="student.StudentDashboardController">
    <children>
       <Pane maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="65.0" prefWidth="1080.0" style="-fx-background-color: #3A003A;" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <TextField fx:id="mStudentName" alignment="CENTER" editable="false" layoutX="32.0" layoutY="9.0" prefHeight="47.0" prefWidth="262.0" style="-fx-background-color: #3A003A; -fx-text-inner-color: #ffffff;" text="Divyanshu Maurya">
+            <TextField fx:id="mStudentName" alignment="CENTER" editable="false" focusTraversable="false" layoutX="32.0" layoutY="9.0" mouseTransparent="true" pickOnBounds="false" prefHeight="47.0" prefWidth="262.0" style="-fx-background-color: #3A003A; -fx-text-inner-color: #ffffff;" text="Divyanshu Maurya">
                <font>
                   <Font size="18.0" />
                </font>
@@ -31,7 +31,7 @@
       </Pane>
       <Pane fx:id="mainPane" layoutX="-2.0" layoutY="64.0" prefHeight="215.0" prefWidth="952.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="65.0">
          <children>
-            <ChoiceBox fx:id="cbQuizSubject" layoutX="65.0" layoutY="117.0" prefHeight="30.0" prefWidth="700.0" />
+            <ChoiceBox fx:id="cbQuizSubject" layoutX="65.0" layoutY="117.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="30.0" prefWidth="700.0" />
             <ChoiceBox fx:id="cbQuizTopic" layoutX="65.0" layoutY="183.0" prefHeight="30.0" prefWidth="700.0" />
             <Button fx:id="btnGo" layoutX="870.0" layoutY="117.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Go" />
             <Button fx:id="btnStart" layoutX="870.0" layoutY="183.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="80.0" text="Start" />

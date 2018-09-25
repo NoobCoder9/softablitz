@@ -20,7 +20,7 @@ public class TeacherMain {
     public static void main(String args[])throws IOException
     {
         TeacherHelper th = new TeacherHelper();
-        StudentHelper sh = new StudentHelper();
+        //StudentHelper sh = new StudentHelper();
         JSONArray questions = new JSONArray();
         JSONArray sections = new JSONArray();
         JSONObject quiz =new JSONObject();
@@ -38,10 +38,12 @@ public class TeacherMain {
          sections.add(th.createSection("SectionB", "30", questions));
            System.out.println("SA");
          quiz = th.createQuiz("Q3TEST" ,"MR.x", "RandomStuff", "IDK", sections);
-           System.out.println("Qui");
+           System.out.println(quiz);
+           JSONObject clone = (JSONObject) quiz.clone();
+           System.out.println(clone);
          th.hostQuiz(quiz);
          
-         sh.getQuiz("Q01TEST");
+       //  sh.getQuiz("Q01TEST");
          
         
   }

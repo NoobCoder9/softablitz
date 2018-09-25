@@ -6,38 +6,53 @@
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="720.0" prefWidth="1080" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teacher.TeacherHostController">
+<AnchorPane id="AnchorPane" prefHeight="720.0" prefWidth="1080" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="teacher.TeacherHostController">
    <children>
       <VBox layoutX="14.0" layoutY="24.0" prefHeight="720" prefWidth="1080" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
          <children>
-            <Label fx:id="labelName" prefHeight="42.0" prefWidth="883.0" text="Label" />
             <Label text="Enter Subject:">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField onAction="#entertextfieldSubject" />
-            <Label text="Enter Quiz Name:">
+            <TextField fx:id="textfieldSubject" />
+            <Label text="Enter Topic Name:">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField onAction="#entertextfieldQuizName" />
-            <Label text="Enter Section:">
+            <TextField fx:id="textfieldQuizName" />
+            <HBox>
+               <children>
+                  <Label prefHeight="22.0" prefWidth="396.0" text="Enter Section:      ">
+                     <font>
+                        <Font size="15.0" />
+                     </font>
+                  </Label>
+                  <Label prefHeight="21.0" prefWidth="334.0" text="                                                          Enter Time">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <HBox spacing="20.0">
+               <children>
+                  <TextField fx:id="textfieldSection" prefHeight="29.0" prefWidth="519.0" />
+                  <Button fx:id="btnChangeSection" disable="true" mnemonicParsing="false" onAction="#pressedChangeSection" prefHeight="29.0" prefWidth="257.0" text="Change Section" />
+                  <TextField fx:id="textfieldTime" prefHeight="29.0" prefWidth="549.0" />
+               </children>
+            </HBox>
+            <Label text="Enter marks for question :">
                <font>
                   <Font size="15.0" />
                </font>
             </Label>
-            <TextField onAction="#entertextfieldSection" />
-            <Label text="Enter time for Quiz:">
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Label>
-            <TextField onAction="#entertextfieldTime" prefHeight="26.0" prefWidth="622.0" />
+            <TextField fx:id="textfieldMarks" prefHeight="26.0" prefWidth="622.0" />
             <Label text="Enter Question:">
                <font>
                   <Font size="15.0" />
@@ -45,15 +60,15 @@
             </Label>
             <TextArea fx:id="textareaQues" prefHeight="200.0" prefWidth="200.0" />
             <Label text="Option 1:" />
-            <TextField onAction="#entertextfieldOp1" />
+            <TextField fx:id="textfieldop1" />
             <Label text="Option 2:" />
-            <TextField onAction="#entertextfieldOp2" />
+            <TextField fx:id="textfieldop2" />
             <Label text="Option 3:" />
-            <TextField onAction="#entertextfieldOp3" />
+            <TextField fx:id="textfieldop3" />
             <Label text="Option 4:" />
-            <TextField onAction="#entertextfieldOp4" />
+            <TextField fx:id="textfieldop4" />
             <Label text="Right Answer:" />
-            <TextField onAction="#entertextfieldAnswer" />
+            <TextField fx:id="textfieldans" />
             <ButtonBar prefHeight="40.0" prefWidth="200.0">
               <buttons>
                 <Button mnemonicParsing="false" onAction="#pressedAddbutton" text="Add" />

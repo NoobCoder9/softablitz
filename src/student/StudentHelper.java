@@ -34,7 +34,7 @@ public class StudentHelper{
     
     public StudentHelper (){
        
-        MongoClientURI uri = new MongoClientURI("mongodb://localhost:27017");
+        MongoClientURI uri = new MongoClientURI("mongodb://192.168.0.3:27017");
         MongoClient mongoClient = new MongoClient(uri);
         dbquiz = mongoClient.getDatabase("QUIZ");
         dbSRecord = mongoClient.getDatabase("STUDENT");

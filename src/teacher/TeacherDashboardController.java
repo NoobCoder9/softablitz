@@ -11,37 +11,44 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import java.sql.*;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import java.io.*;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 /**
  *
  * @author Kushagra
  */
 
-public class TeacherOptionController implements Initializable {
+public class TeacherDashboardController implements Initializable {
     
-    @FXML private Label labelName;
-    String first, last;
+       private String email;
+       @FXML protected AnchorPane dashboardPane;
     
        
     
-    public void receiveData(String firstname, String lastname){
-        first = firstname;
-        last = lastname;
+    public void receiveEmail(String email){
+     this.email = email;
     }
     public void hostButtonPushed(ActionEvent e)throws IOException{
-        Parent hostParent = FXMLLoader.load(getClass().getResource("/teacher/TeacherHost.fxml"));
-        Scene hostScene = new Scene(hostParent);
+           Stage dashboard = (Stage)dashboardPane.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/teacher/TeacherHost.fxml"));
+            Parent hostParent = loader.load();
+            Scene hostScene = new Scene(hostParent);
+            TeacherHostController controller = loader.getController();
+            controller.receiveStage(dashboard);
+           Stage hostWindow = new Stage();
+            
+            dashboard.hide();
+            System.out.println("hidden");
+           hostWindow.setScene(hostScene);
+           hostWindow.show();
+           //dashboard.show();
         
-        Stage hostWindow = (Stage)((Node)e.getSource()).getScene().getWindow();
-        
-        hostWindow.setScene(hostScene);
-        hostWindow.show();
     }
     public void queryButtonPushed(ActionEvent e)throws IOException{
         Parent hostParent = FXMLLoader.load(getClass().getResource("/teacher/TeacherQuery.fxml"));
@@ -52,15 +59,7 @@ public class TeacherOptionController implements Initializable {
         hostWindow.setScene(hostScene);
         hostWindow.show();
     }
-    public void editButtonPushed(ActionEvent e)throws IOException{
-        Parent hostParent = FXMLLoader.load(getClass().getResource("/teacher/TeacherEdit.fxml"));
-        Scene hostScene = new Scene(hostParent);
-        
-        Stage hostWindow = (Stage)((Node)e.getSource()).getScene().getWindow();
-        
-        hostWindow.setScene(hostScene);
-        hostWindow.show();
-    }
+ 
     public void logoutButtonPushed(ActionEvent e)throws IOException{
         Parent hostParent = FXMLLoader.load(getClass().getResource("/teacher/SignUp.fxml"));
         Scene hostScene = new Scene(hostParent);
@@ -73,6 +72,6 @@ public class TeacherOptionController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-         labelName.setText(first + " " +last);
+         
     }    
 }
