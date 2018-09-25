@@ -16,7 +16,7 @@ import student.StudentHelper;
  * @author Divyanshu
  */
 public class TeacherMain {
-    
+ /*   
     public static void main(String args[])throws IOException
     {
         TeacherHelper th = new TeacherHelper();
@@ -47,6 +47,6 @@ public class TeacherMain {
          
         
   }
-    
+    */
     
 }

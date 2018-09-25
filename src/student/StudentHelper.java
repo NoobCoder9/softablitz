@@ -15,6 +15,7 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bson.Document;
@@ -29,13 +30,14 @@ public class StudentHelper{
     
     private MongoDatabase dbquiz, dbSRecord ; 
     private MongoCollection<Document>  qCollection , qDetail; //Collection of Quizes and short description 
+    private MongoClient mongoClient ;
     
     
     
     public StudentHelper (){
        
         MongoClientURI uri = new MongoClientURI("mongodb://192.168.0.3:27017");
-        MongoClient mongoClient = new MongoClient(uri);
+        mongoClient = new MongoClient(uri);
         dbquiz = mongoClient.getDatabase("QUIZ");
         dbSRecord = mongoClient.getDatabase("STUDENT");
         qCollection = dbquiz.getCollection("quizCollection");  // contains all quiz
@@ -169,29 +171,87 @@ public class StudentHelper{
      return id.get(0);
          }
   
-  public void getQuiz(String quizID){
+  public JSONObject getQuiz(String quizID) throws ParseException {
       
-      
+              
            FindIterable<Document> findIterable = qCollection.find(eq("quizid", quizID));
            Block<Document> printBlock = new Block < Document>(){
                @Override
                public void apply(Document t) {
                      System.out.println(t.toJson());
-               }
-               
-               
-           };
-      
-           findIterable.forEach(printBlock);
-          /// qCollection.find(eq("quizid", quizID));
-
-
-
-
-
+               } };
+        Document d   = findIterable.first();
+        JSONObject q = (JSONObject) new JSONParser().parse(d.toJson());
+         return q;
+         //System.out.println(j.get("teachername"));
+         // JSONObject quiz =(JSONObject) new JSONParser().parse(q);
+        // return quiz;
 }
   
   
+  public ArrayList<JSONObject> getSectionArray(JSONObject q){
+      
+      ArrayList<JSONObject> sections = new ArrayList<JSONObject>();
+      sections = (ArrayList<JSONObject>) q.get("sections");
+     //  System.out.println(sections);
+      return sections;
+      
+      
+      
+  }
+  
+    public ArrayList<JSONObject> getQuestionArray(JSONObject s){
+      
+      ArrayList<JSONObject> questions= new ArrayList<JSONObject>();
+      questions = (ArrayList<JSONObject>) s.get("questions");
+     //  System.out.println(sections);
+      return questions;
+      
+  }
+    
+    public JSONObject getSection(ArrayList<JSONObject> s, int i){
+        
+        return s.get(i);
+    }
+    
+    public JSONObject getQuestion(ArrayList<JSONObject> q, int i){
+        
+        return q.get(i);
+    }
+    
+   public ArrayList<String> getOptionsArray(JSONObject q){
+      
+      ArrayList<String> options= new ArrayList<String>();
+      options = (ArrayList<String>) q.get("options");
+     //  System.out.println(sections);
+      return options;
+      
+  }
+   
+   public String getMarks(JSONObject q){
+       return (String) q.get("marks");
+       }
+   
+   public String getAns(JSONObject q){
+       return (String) q.get("answer");
+       }
+      
+   public String getTime(JSONObject s){
+       return (String) s.get("time");
+       }
+     
+     
+   
+    
+  
+  
+ 
+  
+  public void close(){
+      mongoClient.close();
+      
+      
+  }
 }
 
 

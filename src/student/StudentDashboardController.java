@@ -16,8 +16,10 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.json.simple.parser.ParseException;
 
 
 public class StudentDashboardController implements Initializable {
@@ -30,6 +32,7 @@ public class StudentDashboardController implements Initializable {
     @FXML private Button btnStart;
     @FXML private ChoiceBox cbQuizSubject;
     @FXML private ChoiceBox cbQuizTopic;
+    @FXML protected AnchorPane dashboardPane;
     
     private String studentname ;
     private String email;
@@ -51,14 +54,23 @@ public class StudentDashboardController implements Initializable {
            cbQuizTopic.getItems().addAll(topics);
      }
     
-    public void buttonStartPushed(ActionEvent e) throws IOException{
+    public void buttonStartPushed(ActionEvent e) throws IOException, ParseException{
+        
+           
+            
+            String quizId = sh.getQuizId(currentSubject, (String) cbQuizTopic.getValue());
+            System.out.println(quizId);
             FXMLLoader loader =new FXMLLoader();
             loader.setLocation(getClass().getResource("/student/StudentQuizPage.fxml"));
             Parent quizRoot = loader.load();
             Scene quizScene = new Scene(quizRoot,1080,720);
-            Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+            StudentQuizPageController controller = loader.getController();
+            Stage dashboard =(Stage) dashboardPane.getScene().getWindow();
+            controller.receiveDetails(dashboard, quizId );
+            Stage stage = new Stage();
             stage.setScene(quizScene);
             stage.show();
+            dashboard.hide();
         
         
     }

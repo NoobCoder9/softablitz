@@ -15,7 +15,7 @@ import java.util.ArrayList;
  */
 public class StudentMainTest {
 
-public static void main(String args[])throws IOException{
+/*public static void main(String args[])throws IOException{
            
     StudentHelper sh = new StudentHelper();
    /* ArrayList<String> a;
@@ -27,11 +27,9 @@ public static void main(String args[])throws IOException{
         i--;
     }
          */
-   String s = sh.getQuizId("Physics", "Water");
-      System.out.println(s); 
+ //  String s = sh.getQuizId("Physics", "Water");
+     // System.out.println(s); 
 
     
     
-}
-
 }

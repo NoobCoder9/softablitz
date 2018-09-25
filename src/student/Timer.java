@@ -5,43 +5,43 @@
  */
 package student;
 
+import javafx.scene.control.TextField;
+
 /**
  *
- * @author Divyanshu
+ * @author Kushagra
  */
-public class Timer  implements Runnable{
 
+public class Timer {
+    
+    
+    Thread thread = new Thread();
     private int seconds;
-    
-    
-    @Override
-    public void run() {
- 
-        while(this.seconds>0){
-            
-            
-            
-            
-            
-            
-            
-        }
+    private TextField tf;
+    /**
+     *
+     * @param time
+     * @throws InterruptedException
+     */
+    public void runTimer(int time, TextField tf)throws InterruptedException{
         
-        
-        
-        
+        do{
+            thread.sleep(1000);
+            tf.setText(Integer.toString(time));
+            System.out.println(time);
+            
+        }while(time-->0);
     }
-    
-    public void startTimer(int seconds){
-        
-        this.seconds =seconds;
-        Thread t = new Thread(this);
-        t.start();
- }
-    
-    
-    
-    
-    
-    
+
+    /**
+     *
+     * @param time
+     * @throws InterruptedException
+     */
+    public Timer(int time, TextField tf)throws InterruptedException{
+        this.seconds = time;
+        this.tf = tf;
+        runTimer(this.seconds, this.tf);
+    }
 }
+

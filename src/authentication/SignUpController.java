@@ -124,7 +124,7 @@ public class SignUpController implements Initializable {
                         FXMLLoader loader = new FXMLLoader();
                         loader.setLocation(getClass().getResource("/student/StudentDashboard.fxml"));
                         Parent studentRoot = loader.load();
-                        Scene scene = new Scene(studentRoot);     
+                        Scene scene = new Scene(studentRoot,1080, 720);     
                         StudentDashboardController sDashboard = loader.getController();
                         sDashboard.recieveEmail(siEmail.getText().trim());
                        //Stage stage =(Stage)((Node)e.getSource()).getScene().getWindow();
@@ -141,7 +141,7 @@ public class SignUpController implements Initializable {
                           System.out.println("done");
                         Parent teacherRoot = loader.load();
                           System.out.println("done");
-                        Scene scene = new Scene(teacherRoot);     
+                        Scene scene = new Scene(teacherRoot, 1080, 720);     
                           System.out.println("done");
                         TeacherDashboardController tDashboard = loader.getController();
                           System.out.println("done");
