@@ -5,7 +5,10 @@
  */
 package student;
 
+import java.io.IOException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,8 +29,14 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
+import static resources.Constant.KEY;
+import security.EncryptionDecryption;
 
 public class StudentQuizPageController implements Initializable {
 
@@ -44,7 +53,7 @@ public class StudentQuizPageController implements Initializable {
 @FXML TextField sName;
 @FXML ChoiceBox cbSection;
 @FXML Button btnGo;
-@FXML TextField timer;
+@FXML public TextField timer;
 
 //Question pane 
 @FXML TextArea displayQuestion;
@@ -74,151 +83,298 @@ public class StudentQuizPageController implements Initializable {
   private String quizid;
   private StudentHelper sh ;
   private JSONObject quiz;
-  private ArrayList<JSONObject> sections;
+  private JSONArray sections;
   private JSONObject currentSection;
   private JSONObject currentQuestion;
   private String Canswer;
-  
+    private    EncryptionDecryption ed;
   private ArrayList<JSONObject> questions;
   private ArrayList<String> options;
   static int countS =0, countQ=0;
   private static int countMarks = 0;
-  
-  private ArrayList<ArrayList<Integer>> secQ=new ArrayList<ArrayList<Integer>>(); // keeps track of section and question
-  private ArrayList<Integer> qTrack = new ArrayList<Integer>();  
+    private int flag=0, opted=-1;
+ private Timer time;
+// private ArrayList<ArrayList<Integer>> secQ=new ArrayList<ArrayList<Integer>>(); // keeps track of section and question
+   private ArrayList<Integer> qTrack = new ArrayList<Integer>();  
+   private ArrayList<Integer> tTrack = new ArrayList<Integer>();
     
+        StudentDashboardController sc;
         
-        
-    public void receiveDetails(Stage dashboard, String quizId) throws ParseException{
+    public void receiveDetails(Stage dashboard, String quizId, StudentDashboardController sc) throws ParseException{
             sh =new StudentHelper();
+            this.sc = sc;
             this.dashboard =dashboard;
             this.quizid = quizId;
             System.out.println("Recieved dashboard and id "+quizId );
-            quiz =sh.getQuiz(quizId);
-            sections =sh.getSectionArray(quiz);
-           // System.out.println(sections);
-            int i =0;
-            System.out.println(sections.size());
-            while(i<sections.size()){
-                qTrack.add(i,0);
-                i++;
-            }
-            System.out.println("Qtrack "+qTrack);
-            currentSection = sections.get(countS);
-            questions = sh.getQuestionArray(currentSection);
-            Collections.shuffle(questions);
-            
-            currentQuestion = questions.get(qTrack.get(countS));
-            displayQuestion.setText((String) currentQuestion.get("question"));
-            options  =sh.getOptionsArray(currentQuestion);
-            op1.setText(options.get(0).toString());
-            op2.setText(options.get(1).toString());
-            op3.setText(options.get(2).toString());
-            op4.setText(options.get(3).toString());
-            
-            marks.setText(currentQuestion.get("marks").toString());
-           // countMarks = countMarks +Integer.parseInt(marks.getText());
-           // secQ.add(new ArrayList<Integer>());
-            //secQ.get(0).add(countS);
-            //secQ.get(0).add(countQ);
-            
-               
-            //sh.getSectionArray(quiz);
-            //sh.close();
-          // System.out.println(quiz);
-  }
-
+             quiz  =sh.getQuiz(quizId);
+             sections  = sh.getSectionArray(quiz);
+              //System.out.println(sections);
+             for(int i=0; i<sections.size(); i++){
+                     qTrack.add(i, 0);
+                     JSONObject secOb =(JSONObject) sections.get(i);
+                     System.out.println(secOb);
+                     tTrack.add(i, Integer.parseInt((String) secOb.get("time")));
+                    
+                     JSONArray q = sh.getQuestionArray(secOb);
+                     System.out.println(q);
+                     JSONArray t = sh.shufflee(q);
+                     System.out.println(t);
+                     secOb.replace("questions", t);
+                     System.out.println(secOb);
+                     sections.set(i, secOb);
+                 }
+             System.out.println(tTrack);
+             
+                    currentSection = (JSONObject) sections.get(countS);
+     try {
+         changeQuestion(currentSection, countQ);
+     } catch (IOException ex) {
+         Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+     } catch (NoSuchAlgorithmException ex) {
+         Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+     } catch (NoSuchPaddingException ex) {
+         Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+     } catch (InvalidKeyException ex) {
+         Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+     } catch (IllegalBlockSizeException ex) {
+         Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+     } catch (BadPaddingException ex) {
+         Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+     }
+                    
+    }
+    
+    
+ 
     public void startQuiz(ActionEvent e){
         startPane.setVisible(false);
-    
+        //  currentSection = (JSONObject) sections.get(countS);
+                 //  changeSectionNext(currentSection, countS);
+       time = new Timer(tTrack.get(0), timer);
+                 Thread t = new Thread(time);
+        t.start();
+  
         quizPane.setVisible(true);
   }
-
+    
+    
+     public void changeQuestion(JSONObject currentSection , int qno) throws IOException, NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
+         flag=0;
+            opted=-1;
+             op1.setSelected(false);
+             op2.setSelected(false);
+             op3.setSelected(false);
+             op4.setSelected(false);
+            this.currentSection = currentSection;
+            questions = sh.getQuestionArray(this.currentSection);
+            currentQuestion = questions.get(qno);
+            String ques = (String) currentQuestion.get("question");
+            displayQuestion.setText(ed.decryptData(ques));
+            options  =sh.getOptionsArray(currentQuestion);
+            op1.setText(options.get(0).toString());
+            op2.setText(options.get(1).toString());
+            op3.setText(options.get(2).toString());
+            op4.setText(options.get(3).toString());
+            marks.setText(currentQuestion.get("marks").toString());
+            
+    }
+    
+    
     public void nextQuestionPressed(ActionEvent e){
             
-            
-            countQ++;
            
-            qTrack.set(countS, countQ);
-            currentSection = sections.get(countS);
-             System.out.println("Cuurent S "+currentSection);
-            currentQuestion = questions.get(qTrack.get(countS));
-            displayQuestion.setText((String) currentQuestion.get("question"));
-            options  =sh.getOptionsArray(currentQuestion);
-            op1.setText(options.get(0).toString());
-            op2.setText(options.get(1).toString());
-            op3.setText(options.get(2).toString());
-            op4.setText(options.get(3).toString());
-            marks.setText(currentQuestion.get("marks").toString());
-            if(countQ==questions.size()-1 )
-              changeSection(countS);
-              
+           if(countS<sections.size() )
+           {
+              countQ++;
+              if(countQ < questions.size()){
+              qTrack.set(countS, countQ);
+                  try {
+                      changeQuestion(currentSection, countQ);
+                  } catch (IOException ex) {
+                      Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+                  } catch (NoSuchAlgorithmException ex) {
+                      Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+                  } catch (NoSuchPaddingException ex) {
+                      Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+                  } catch (InvalidKeyException ex) {
+                      Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+                  } catch (IllegalBlockSizeException ex) {
+                      Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+                  } catch (BadPaddingException ex) {
+                      Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+                  }
+           }else
+              {
+                  
+             changeSectionNext(currentSection,countS+1 );     
+           }
+           }
+           else
+           btnNext.setDisable(true);
+           
+                       
       }
     
-    public void  changeSection(int i){
-            
-            i ++;
-            if(i<sections.size()) {
-             countS = i;
-             System.out.println("changeSe" +countS);
-          
-            currentSection = sections.get(countS);
-            questions = sh.getQuestionArray(currentSection);
-            Collections.shuffle(questions);
-            currentQuestion =  questions.get(qTrack.get(countS));
-            countQ = qTrack.get(countS)-1;
-             System.out.println("Qtrack "+qTrack);
-          //  displayQuestion(int i );
-           //return currentSection;
-            //currentQuestion = 
-            }
-            else{
-                btnNext.setDisable(true);
-            }
+    
+    
+    
+    public void changeSectionNext(JSONObject currentSection,  int S ){
         
+          if(S<sections.size()) {
+             
+              try {
+                  time.stop();
+                  qTrack.set(countS, countQ);
+                  tTrack.set(countS, Integer.parseInt(timer.getText()));
+                  // timer.setText(" ");
+                  System.out.println(tTrack);
+                  countS = S;
+                  countQ=qTrack.get(countS);
+                  time = new Timer(tTrack.get(countS), timer);
+                  Thread t = new Thread(time);
+                  t.start();
+                  
+                  
+                  this.currentSection = sh.getSection(sections, countS);
+                  changeQuestion(this.currentSection , countQ);
+              } catch (IOException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (NoSuchAlgorithmException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (NoSuchPaddingException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (InvalidKeyException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (IllegalBlockSizeException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (BadPaddingException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              }
         
+    }else
+              btnNext.setDisable(true);
+   }
+    
+    
+    
+     public void changeSectionPrev(JSONObject currentSection,  int S ){
+        
+          if(S>-1) {
+             
+             time.stop();
+               tTrack.set(countS, Integer.parseInt(timer.getText()));  
+                // timer.setText(" ");
+             countS = S;
+              time = new Timer(tTrack.get(countS), timer);
+                 Thread t = new Thread(time);
+              t.start();
+          this.currentSection = sh.getSection(sections, countS);
+              try {
+                  changeQuestion(this.currentSection , qTrack.get(countS) );
+              } catch (IOException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (NoSuchAlgorithmException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (NoSuchPaddingException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (InvalidKeyException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (IllegalBlockSizeException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              } catch (BadPaddingException ex) {
+                  Logger.getLogger(StudentQuizPageController.class.getName()).log(Level.SEVERE, null, ex);
+              }
         
     }
-   
-    public void changeQuestion(int i){
-        
-        currentQuestion = questions.get(i);
-        displayQuestion.setText((String) currentQuestion.get("question"));
-            options  =sh.getOptionsArray(currentQuestion);
-            op1.setText(options.get(0).toString());
-            op2.setText(options.get(1).toString());
-            op3.setText(options.get(2).toString());
-            op4.setText(options.get(3).toString());
-            marks.setText(currentQuestion.get("marks").toString());
-        
-        
-    }
+   }
+    
+    
+    
+    
+   public void btnPrevSectionPressed(ActionEvent e){
+       
+       changeSectionPrev(currentSection, countS-1);
+       
+   }
+    
+   public void btnNextSectionPressed(ActionEvent e){
+       
+       changeSectionNext(currentSection, countS+1);
+       
+   }
+    
     
     public void saveButtonPressed(ActionEvent e){
-         
+          
         
+       
+           checkAnswer();
             
-            Canswer = (String) currentQuestion.get("answer");
-            System.out.println(Canswer+" cans");
+    }
+   
+    public void checkAnswer(){
+        
+       
+        
+        Canswer = (String) currentQuestion.get("answer");
+        
+             //flag=0;
+           // System.out.println(Canswer+" cans");
+          
             if(optionsGroup.getSelectedToggle().equals(op1) && Canswer.equals(op1.getText())){
-                 countMarks = countMarks +Integer.parseInt(marks.getText()); 
-                 System.out.println(countMarks+" "+Integer.parseInt(marks.getText()) );
+                 
+                 flag=1;
+                  if(opted!=0)
+                 opted = 1;
+                // System.out.println(countMarks+" "+Integer.parseInt(marks.getText()) );
            } else if(optionsGroup.getSelectedToggle().equals(op2) && Canswer.equals(op2.getText())){
-                 countMarks = countMarks +Integer.parseInt(marks.getText()); 
-                 System.out.println(countMarks);
+                 
+               flag=1;
+                if(opted!=0)
+               opted = 1;
+                 //System.out.println(countMarks);
            }else  if(optionsGroup.getSelectedToggle().equals(op3) && Canswer.equals(op3.getText())){
-                 countMarks = countMarks +Integer.parseInt(marks.getText()); 
-                 System.out.println(countMarks);
+                 
+               flag=1;
+                if(opted!=0)
+               opted = 1;
+               //  System.out.println(countMarks);
            } else if(optionsGroup.getSelectedToggle().equals(op4) && Canswer.equals(op4.getText())){
-                 countMarks = countMarks +Integer.parseInt(marks.getText()); 
+                 
+                 flag=1;
+                  if(opted!=0)
+                 opted = 1;
+              //   System.out.println(countMarks);
+           
+          } else {
+               flag=0;
+           }
+            //flag=0;
+          
+            if( opted==1){
+                 countMarks = countMarks +Integer.parseInt(marks.getText());
+                 opted=0;
+                  System.out.println(countMarks);
+            }else if(opted==0&&flag==0)
+                    {
+                 countMarks = countMarks -Integer.parseInt(marks.getText());
                  System.out.println(countMarks);
-           } 
+                opted=-1;
+            }
+    }
+    
+    public void sendQueryPressed(ActionEvent e){
+        
+        if(!textareaQuery.getText().trim().equals(""))
+             sh.sendQuery(textareaQuery.getText().trim(), sc.email, quiz.get("teachername").toString());
+               textareaQuery.setText("");
     }
     
     
     public void endButtonPressed(ActionEvent e){
         System.out.println(countMarks);
   /// send marks to record  
+       sh.upDateQuizDone(sc.email, quizid, Integer.toString(countMarks));
        quizPane.setVisible(false);
        EndPane.setVisible(true);
        labelMarks.setText(Integer.toString(countMarks));
@@ -235,7 +391,8 @@ public class StudentQuizPageController implements Initializable {
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        
+          
+          
           //  System.out.println("Recieved dashboard and id "+this.quizid );
        //    sh =new StudentHelper();
            //while(this.quizid!=null)
@@ -246,7 +403,7 @@ public class StudentQuizPageController implements Initializable {
          op3.setToggleGroup(optionsGroup);
          op4.setToggleGroup(optionsGroup);
           
-          
+          ed =  new    EncryptionDecryption(KEY);
         
         
         

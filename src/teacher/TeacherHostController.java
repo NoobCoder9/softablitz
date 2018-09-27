@@ -39,10 +39,10 @@ public class TeacherHostController implements Initializable {
     //private JSONObject s;
     private String sectionName;
     private Stage dashboard;
+    private String tname;
     
-    
-    
-    
+    private TeacherDashboardController td;
+      
       @FXML private TextField textfieldSubject;
       @FXML private TextField textfieldMarks;
       @FXML private TextField textfieldQuizName;
@@ -56,10 +56,13 @@ public class TeacherHostController implements Initializable {
       @FXML private TextArea textareaQues;
       @FXML private Button btnChangeSection;
     
-      public void receiveStage(Stage dashboard){
-           
+         private String email;
+      public void receiveStage(Stage dashboard, String tname, String email, TeacherDashboardController td){
+           this.tname =tname;
+           this.email =email;
            this.dashboard =dashboard;
            System.out.println("Recieved dashboard");
+           this.td = td;
       }
       
     public void pressedAddbutton(ActionEvent e){
@@ -85,21 +88,38 @@ public class TeacherHostController implements Initializable {
         System.out.println(questions);
         
 }
+    
+    
     public void pressedHostExitbutton(ActionEvent e)throws IOException{
         //save to database and go back to TeacherOption
-          pressedChangeSection(e);
-          JSONObject quiz =th.createQuiz("ABC123", "Mr.X", textfieldQuizName.getText().trim(), textfieldSubject.getText().trim(), sections);
-          th.hostQuiz(quiz);
-          th.addQuizDetail(textfieldSubject.getText().trim(),textfieldQuizName.getText().trim() );
-          th.close();
-        
-           
+        if(textfieldSubject.getText().trim().equals("")){
+             th.close();
        // Parent saveExitroot = FXMLLoader.load(getClass().getResource("/teacher/TeacherDashboard.fxml"));
         //Scene scene = new Scene(saveExitroot);
           Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+           
            dashboard.show();
         //stage.setScene(scene);
           stage.close();
+        }
+        else{
+         String quizid = th.generateId(textfieldSubject.getText());
+          pressedChangeSection(e);
+          JSONObject quiz =th.createQuiz(quizid,tname, textfieldQuizName.getText().trim(), textfieldSubject.getText().trim(), sections);
+          th.hostQuiz(quiz);
+          th.upDateQuizHosted(email);
+          th.addQuizDetail(textfieldSubject.getText().trim(),textfieldQuizName.getText().trim() ,quizid);
+           td.numqh.setText(Integer.toString(th.getHostedQuizNo(email)));
+           
+           th.close();
+       // Parent saveExitroot = FXMLLoader.load(getClass().getResource("/teacher/TeacherDashboard.fxml"));
+        //Scene scene = new Scene(saveExitroot);
+          Stage stage = (Stage)((Node)e.getSource()).getScene().getWindow();
+           
+           dashboard.show();
+        //stage.setScene(scene);
+          stage.close();
+        }
     }
     
     public void pressedChangeSection(ActionEvent e){
@@ -123,6 +143,8 @@ public class TeacherHostController implements Initializable {
            textfieldSection.setDisable(false);
            btnChangeSection.setDisable(true);
  }
+    
+ 
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -130,6 +152,7 @@ public class TeacherHostController implements Initializable {
                questions = new JSONArray();
                sections =new JSONArray();
                qno=1;
+               
         
     }    
     

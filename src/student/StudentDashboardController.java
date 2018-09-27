@@ -15,10 +15,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 
@@ -35,15 +39,25 @@ public class StudentDashboardController implements Initializable {
     @FXML protected AnchorPane dashboardPane;
     
     private String studentname ;
-    private String email;
+    String email;
     private  ArrayList<String> subjects;
     private ArrayList<String> topics;
     private String currentSubject;
     private StudentHelper sh;
-    
+    private int numQD;
+       @FXML Label numqd;
+         private ArrayList<Object> details;
+       @FXML private TextField userName;
+       
+    @FXML Pane queryPane;
+    @FXML ListView queryList;
+    @FXML Button btnquery;
     
     public void recieveEmail(String email){
         this.email = email;
+    //     numQD =  sh.getDoneQuizNo(email);
+     getDetails();
+    numqd.setText((String) details.get(2));
    }
    
     
@@ -66,16 +80,36 @@ public class StudentDashboardController implements Initializable {
             Scene quizScene = new Scene(quizRoot,1080,720);
             StudentQuizPageController controller = loader.getController();
             Stage dashboard =(Stage) dashboardPane.getScene().getWindow();
-            controller.receiveDetails(dashboard, quizId );
+            controller.receiveDetails(dashboard, quizId , this);
             Stage stage = new Stage();
             stage.setScene(quizScene);
+               stage.setTitle("SQUIZ");
             stage.show();
             dashboard.hide();
         
         
     }
     
-    
+    public void buttonViewQueryPushed(ActionEvent e){
+        
+         queryPane.setVisible(true);
+        
+        ArrayList<JSONObject> queries = new ArrayList<JSONObject>();
+        JSONObject temp = new JSONObject ();
+        queries = sh.viewQueryAnswer(email);
+        for(int i=0;i<queries.size(); i++){
+                     temp = queries.get(i);
+                     queryList.getItems().add("Query : "+ temp.get("query"));
+                       queryList.getItems().add("Reply : "+ temp.get("reply"));
+                         queryList.getItems().add(" ");
+        }
+        btnquery.setDisable(true);
+        queryList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        
+        
+        
+        
+    }
     
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -89,5 +123,12 @@ public class StudentDashboardController implements Initializable {
         //cbQuizSubject.setItems((ObservableList) subjects);
         
     }    
+
+   public void getDetails() {
+      System.out.println("getDEtails called "+email);
+      details =  sh.getDetails(email);
+      userName.setText((String) details.get(0));
+   
+   }
     
 }

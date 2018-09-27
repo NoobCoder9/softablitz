@@ -7,6 +7,8 @@ package authentication;
 
 import java.io.IOException;
 import java.net.URL;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +27,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import static resources.Constant.RESULT_OK;
 import student.StudentDashboardController;
 import teacher.TeacherDashboardController;
@@ -63,8 +68,8 @@ public class SignUpController implements Initializable {
      *AnchorPane signIn button FOR UI CHANGES
      */
     public void signInCalled(){
-    abtnSignin.setStyle("-fx-background-color:  #aa00ff;-fx-font: 20 arial; ");
-    abtnSignup.setStyle("-fx-background-color:    #6a1b9a; -fx-font: 15 arial;");
+    abtnSignin.setStyle("-fx-background-color:  #aa00ff; -fx-font: 25px System ; -fx-font-weight :bold;");
+    abtnSignup.setStyle("-fx-background-color:    #6a1b9a;  -fx-font: 15px System ;");
     signUp.setVisible(false);
         signIn.setVisible(true);
         
@@ -75,8 +80,8 @@ public class SignUpController implements Initializable {
      */
     public void signUpCalled(){
     
-        abtnSignup.setStyle("-fx-background-color:  #aa00ff;-fx-font: 20 arial; ");
-        abtnSignin.setStyle("-fx-background-color:    #6a1b9a; -fx-font: 15 arial;");
+        abtnSignup.setStyle("-fx-background-color:  #aa00ff;-fx-font: 25px System ;-fx-font-weight :bold; ");
+        abtnSignin.setStyle("-fx-background-color:    #6a1b9a; -fx-font: 15px System;");
         signUp.setVisible(true);
         signIn.setVisible(false);
         
@@ -91,7 +96,19 @@ public class SignUpController implements Initializable {
         
        auth = new Authentication();
         System.out.println(user);
-        resultCode = auth.signUpUser(firstName.getText().trim(), lastName.getText().trim(), suEmail.getText().trim(), suPassword.getText(),user );
+        try {
+            resultCode = auth.signUpUser(firstName.getText().trim(), lastName.getText().trim(), suEmail.getText().trim(), suPassword.getText(),user );
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        }
         if (resultCode==RESULT_OK){
              // IF user signup coorectly all went well
              System.out.println("Sign UP DONE!!!!");
@@ -116,7 +133,19 @@ public class SignUpController implements Initializable {
     public void signInUser(ActionEvent e) throws IOException {
    
            auth = new Authentication();
-           resultCode=  auth.signInUser(siEmail.getText().trim(),  siPassword.getText(), user );
+        try {
+            resultCode=  auth.signInUser(siEmail.getText().trim(),  siPassword.getText(), user );
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchPaddingException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InvalidKeyException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IllegalBlockSizeException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (BadPaddingException ex) {
+            Logger.getLogger(SignUpController.class.getName()).log(Level.SEVERE, null, ex);
+        }
           System.out.println(resultCode+user);
            if(resultCode==RESULT_OK && user.equals("student")){
                         /// System.out.println(resultCode);
@@ -130,6 +159,7 @@ public class SignUpController implements Initializable {
                        //Stage stage =(Stage)((Node)e.getSource()).getScene().getWindow();
                         Stage stage = new Stage();
                         stage.setScene(scene);
+                        stage.setTitle("Student Dashboard");
                         stage.show();
                         closeUI();
                         auth.close();
@@ -151,6 +181,7 @@ public class SignUpController implements Initializable {
                          System.out.println("done");
                         Stage stage = new Stage();
                         stage.setScene(scene);
+                           stage.setTitle("Teacher Dashboard");
                         stage.show();
                         closeUI();
                         auth.close();

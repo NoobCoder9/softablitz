@@ -15,7 +15,9 @@ import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Sorts.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.bson.Document;
@@ -24,24 +26,27 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import static resources.Constant.ALPHA;
 
 
 public class StudentHelper{
     
     private MongoDatabase dbquiz, dbSRecord ; 
-    private MongoCollection<Document>  qCollection , qDetail; //Collection of Quizes and short description 
+    private MongoCollection<Document>  qCollection , qDetail, s_rec, qQuery; //Collection of Quizes and short description 
     private MongoClient mongoClient ;
     
     
     
     public StudentHelper (){
        
-        MongoClientURI uri = new MongoClientURI("mongodb://192.168.0.3:27017");
+        MongoClientURI uri = new MongoClientURI(ALPHA);
         mongoClient = new MongoClient(uri);
         dbquiz = mongoClient.getDatabase("QUIZ");
         dbSRecord = mongoClient.getDatabase("STUDENT");
         qCollection = dbquiz.getCollection("quizCollection");  // contains all quiz
         qDetail = dbquiz.getCollection("quizDetail");  //contains subjects and topics
+        s_rec =  dbSRecord.getCollection("studentRecord");
+        qQuery = dbquiz.getCollection("quizQuery");
  }
     
     /**
@@ -189,10 +194,10 @@ public class StudentHelper{
 }
   
   
-  public ArrayList<JSONObject> getSectionArray(JSONObject q){
+  public JSONArray getSectionArray(JSONObject q){
       
-      ArrayList<JSONObject> sections = new ArrayList<JSONObject>();
-      sections = (ArrayList<JSONObject>) q.get("sections");
+     JSONArray sections =new JSONArray();
+      sections =(JSONArray) q.get("sections");
      //  System.out.println(sections);
       return sections;
       
@@ -200,10 +205,10 @@ public class StudentHelper{
       
   }
   
-    public ArrayList<JSONObject> getQuestionArray(JSONObject s){
+    public JSONArray getQuestionArray(JSONObject s){
       
-      ArrayList<JSONObject> questions= new ArrayList<JSONObject>();
-      questions = (ArrayList<JSONObject>) s.get("questions");
+   JSONArray questions=new JSONArray();
+      questions=(JSONArray) s.get("questions");
      //  System.out.println(sections);
       return questions;
       
@@ -239,14 +244,187 @@ public class StudentHelper{
    public String getTime(JSONObject s){
        return (String) s.get("time");
        }
-     
-     
    
-    
-  
-  
+   
+public  JSONArray shuffle (JSONArray array)  {
+   
+        Random rnd = new Random();
+        for (int i = array.size() - 1; i >= 0; i--)
+        {
+          int j = rnd.nextInt(i + 1);
+      
+          Object object = array.get(j);
+          array.add(j, array.get(i));
+          array.add(i, object);
+        }
+    return array;
+}
+     
+ public JSONArray shufflee(JSONArray q){
+           
+          JSONArray sArray = new JSONArray();
+          ArrayList<Integer> qList = new ArrayList<Integer>();
+           for(int i=0; i<q.size(); i++)
+             qList.add(i);
+            Collections.shuffle(qList);
+            for(int i =0 ; i<qList.size(); i++)
+                sArray.add(i, q.get(qList.get(i)));
+           return sArray;
+ }  
  
+  public ArrayList<Object> getDetails(String email){
+        
+       ArrayList<Object> details = new ArrayList<Object>();
+       FindIterable<Document> findIterable = s_rec.find(eq("email", email));
+       Block<Document> printBlock =new Block<Document>(){
+           @Override
+           public void apply(Document t) {
+               
+          
+              
+               try {
+                   JSONObject q = (JSONObject) new JSONParser().parse(t.toJson());
+                   details.add(q.get("firstname"));
+                   details.add(q.get("lastname"));
+                   details.add(q.get("NQuizdone"));
+                  
+               } catch (ParseException ex) {
+                   Logger.getLogger(StudentHelper.class.getName()).log(Level.SEVERE, null, ex);
+               }
+             
+                    
+           }
+           
+       };
+       findIterable.forEach(printBlock);
+       System.out.println(details);
+       return details;
+         
+   }
+   
+       public Integer getDoneQuizNo(String email)
+   {   
+       ArrayList<Integer> a= new ArrayList<Integer>(); 
+            FindIterable<Document> findIterable = s_rec.find(eq("email",email));
+            Block<Document> printBlock =new Block<Document>(){
+   @Override
+           public void apply(Document t) {
+                       
+                       a.add(Integer.parseInt(t.getString("NQuizdone")));
+                       
+           }
+           
+       };
+             findIterable.forEach(printBlock);  
+       
+        return a.get(0);
+       
+   }
   
+    public ArrayList<String> getQuery(String email){
+       
+     ArrayList<String> queries = new ArrayList<String>();
+       FindIterable<Document> findIterable = qQuery.find(eq("student", email));
+       Block<Document> printBlock =new Block<Document>(){
+           @Override
+           public void apply(Document t) {
+               
+               queries.add(t.getString("query"));
+           }
+           
+       };
+       findIterable.forEach(printBlock);
+      return queries;
+       
+       
+   }
+ 
+    public ArrayList<String> getQueryReplies(String email, String query){
+       
+     ArrayList<String> queries = new ArrayList<String>();
+       FindIterable<Document> findIterable = qQuery.find(and(eq("student", email), eq("query", query)));
+       Block<Document> printBlock =new Block<Document>(){
+           @Override
+           public void apply(Document t) {
+               
+               queries.add(t.getString("query"));
+           }
+           
+       };
+       findIterable.forEach(printBlock);
+      return queries;
+       
+       
+   }
+    
+    public void sendQuery(String q, String sname, String tname){
+        JSONObject query = new JSONObject();
+        Document d = new Document();
+       
+       d.append("query", q);
+          d.append("student", sname);
+              d.append("teacher", tname);
+                 d.append("reply", "");
+        qQuery.insertOne(d);
+        
+        
+        
+        
+    }
+    
+    public void upDateQuizDone(String email, String quizid, String marks){
+                     ArrayList<Integer> a= new ArrayList<Integer>(); 
+                     
+            FindIterable<Document> findIterable = s_rec.find(eq("email",email));
+            Block<Document> printBlock =new Block<Document>(){
+   @Override
+           public void apply(Document t) {
+                        JSONObject o = new JSONObject();
+                        o.put("id", quizid);
+                        o.put("marks",marks);
+                       a.add(Integer.parseInt(t.getString("NQuizdone"))+1);
+                      
+                          t.remove("NQuizdone");
+                          t.append("NQuizdone",Integer.toString(a.get(0)));
+                          t.append("quiz",o);
+                          s_rec.deleteOne(eq("email", email));
+                         
+                          s_rec.insertOne(t);
+                          
+                        // Integer.toString(a.get(0))
+           }
+           
+       };
+             findIterable.forEach(printBlock);  
+       
+        
+    } 
+    
+    public ArrayList<JSONObject> viewQueryAnswer(String email){
+        
+        
+       
+     ArrayList<JSONObject> queries = new ArrayList<JSONObject>();
+       FindIterable<Document> findIterable = qQuery.find(eq("student", email));
+       Block<Document> printBlock =new Block<Document>(){
+           @Override
+           public void apply(Document t) {
+               JSONObject temp = new JSONObject();
+               temp.put("query", t.get("query"));
+               temp.put("reply",t.get("reply"));
+               queries.add(temp);
+               
+           }
+           
+       };
+       findIterable.forEach(printBlock);
+      return queries;
+       
+       
+
+   
+    }
+    
   public void close(){
       mongoClient.close();
       

@@ -5,7 +5,11 @@
         <group>
             <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/squiz/SquizMain.java</file>
             <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/teacher/TeacherHelper.java</file>
-            <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/teacher/TeacherHostController.java</file>
+            <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/authentication/Authentication.java</file>
+            <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/student/StudentDashboardController.java</file>
+            <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/student/StudentHelper.java</file>
+            <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/student/StudentQuizPageController.java</file>
+            <file>file:/F:/AVISHKAR%202K18/SOFTABLITZ/SQUIZ/src/authentication/SignUpController.java</file>
         </group>
     </open-files>
 </project-private>

@@ -43,8 +43,8 @@
                   <Font size="15.0" />
                </font>
             </PasswordField>
-            <CheckBox fx:id="cbsiTeacher" layoutX="80.0" layoutY="329.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="246.0" text="Teacher" />
-            <CheckBox fx:id="cbsiStudent" layoutX="327.0" layoutY="329.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="246.0" text="Student" />
+            <CheckBox fx:id="cbsiTeacher" layoutX="80.0" layoutY="329.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="246.0" text="Teacher" textFill="WHITE" />
+            <CheckBox fx:id="cbsiStudent" layoutX="327.0" layoutY="329.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="246.0" text="Student" textFill="WHITE" />
          </children>
       </AnchorPane>
       <AnchorPane fx:id="signUp" accessibleRole="BUTTON" prefHeight="600.0" prefWidth="364.0" style="-fx-background-color: #8e24aa;" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="435.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
@@ -95,12 +95,12 @@
                   <Font size="15.0" />
                </font>
             </PasswordField>
-            <CheckBox fx:id="cbsuTeacher" layoutX="120.0" layoutY="420.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="199.0" text="Teacher" AnchorPane.leftAnchor="120.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="421.0">
+            <CheckBox fx:id="cbsuTeacher" layoutX="120.0" layoutY="420.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="199.0" text="Teacher" textFill="WHITE" AnchorPane.leftAnchor="120.0" AnchorPane.rightAnchor="300.0" AnchorPane.topAnchor="421.0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="cbsuStudent" layoutX="353.0" layoutY="421.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" text="Student" AnchorPane.leftAnchor="353.0" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="421.0">
+            <CheckBox fx:id="cbsuStudent" layoutX="353.0" layoutY="421.0" mnemonicParsing="false" prefHeight="35.0" prefWidth="175.0" text="Student" textFill="WHITE" AnchorPane.leftAnchor="353.0" AnchorPane.rightAnchor="120.0" AnchorPane.topAnchor="421.0">
                <font>
                   <Font name="System Bold" size="14.0" />
                </font>

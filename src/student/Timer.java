@@ -6,42 +6,41 @@
 package student;
 
 import javafx.scene.control.TextField;
+import javax.naming.Context;
 
 /**
  *
  * @author Kushagra
  */
 
-public class Timer {
+public class Timer implements Runnable{
+       
     
-    
-    Thread thread = new Thread();
-    private int seconds;
-    private TextField tf;
-    /**
-     *
-     * @param time
-     * @throws InterruptedException
-     */
-    public void runTimer(int time, TextField tf)throws InterruptedException{
+         int time;
+        private volatile boolean end = false;
+        private TextField tf;
         
-        do{
-            thread.sleep(1000);
-            tf.setText(Integer.toString(time));
-            System.out.println(time);
-            
-        }while(time-->0);
-    }
-
-    /**
-     *
-     * @param time
-     * @throws InterruptedException
-     */
-    public Timer(int time, TextField tf)throws InterruptedException{
-        this.seconds = time;
-        this.tf = tf;
-        runTimer(this.seconds, this.tf);
-    }
+        
+        public Timer(int time, TextField tf )
+        {
+                this.time = time;
+                this.tf = tf;
 }
 
+        @Override
+            public void run(){
+                            while(time-- > 0 && !end){
+                                    try {
+                                            Thread.sleep(1000);
+                                            this.tf.setText(Integer.toString(time));
+                                    } catch (InterruptedException ex) {
+                                                        System.out.println("error");
+                                                }
+                            }
+            }
+            
+               public void stop(){
+                          end = true;
+} 
+            
+}

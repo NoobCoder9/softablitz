@@ -14,9 +14,15 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import static java.util.Collections.list;
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import org.bson.Document;
 import static resources.Constant.*;
+import security.EncryptionDecryption;
 
 
 /**
@@ -25,38 +31,42 @@ import static resources.Constant.*;
  */
 public class Authentication {
     
-     private MongoDatabase auth ;
-    private MongoCollection student =null, teacher=null;
+     private MongoDatabase auth, Student, Teacher ;
+    private MongoCollection student =null, teacher=null, s_rec , t_rec;
      private  String pwd;
      private MongoClient mongoClient ;
+     private    EncryptionDecryption ed;
     public Authentication(){
-        
-            MongoClientURI uri = new MongoClientURI("mongodb://192.168.0.3:27017");
+           ed =  new    EncryptionDecryption(KEY);
+            MongoClientURI uri = new MongoClientURI(ALPHA);
             mongoClient = new MongoClient(uri);
             auth = mongoClient.getDatabase("authentication");
+            Student = mongoClient.getDatabase("STUDENT");
+            Teacher = mongoClient.getDatabase("TEACHER");
             
 }
     
-    public int signUpUser(String firstname, String lastname, String email, String password, String user){
-                    
-                    String pwd = password ;  //encrypt here
+    public int signUpUser(String firstname, String lastname, String email, String password, String user) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
+                   
+                    String pwd = ed.encryptData(password) ;  //encrypt here
                     if(user.equals("student")){
                                student = auth.getCollection("student");
+                               s_rec = Student.getCollection("studentRecord");
                                System.out.println("Student Connected");
-                               Document newUser =new Document("firstname", firstname)
-                                                   .append("lastname",lastname)
-                                                   .append("email", email)
-                                                   .append("password", pwd);
-                                student.insertOne(newUser);
+                              Document newUserA =new Document("firstname", firstname).append("lastname",lastname).append("email", email).append("password", pwd);
+                                Document newUserR =new Document("firstname", firstname).append("lastname",lastname).append("email", email).append("NQuizdone", "0");
+                               student.insertOne(newUserA);
+                               s_rec.insertOne(newUserR);
                                 return RESULT_OK;
                     }else if(user.equals("teacher")){
                                 teacher = auth.getCollection("teacher");
+                                t_rec = Teacher.getCollection("teacherRecord");
                                 System.out.println("Teacher Connected");
-                                Document newUser =new Document("firstname", firstname)
-                                                   .append("lastname",lastname)
-                                                   .append("email", email)
-                                                   .append("password", pwd);
-                                teacher.insertOne(newUser);
+                                Document newUserA =new Document("firstname", firstname).append("lastname",lastname).append("email", email).append("password", pwd);
+                                Document newUserR =new Document("firstname", firstname).append("lastname",lastname).append("email", email).append("NQuizhosted", "0");
+                                                 
+                               teacher.insertOne(newUserA);
+                               t_rec.insertOne(newUserR);
                                 return RESULT_OK;
                     }
                     return RESULT_NOK;
@@ -69,9 +79,9 @@ public class Authentication {
      * @param user IS either student or teacher
      * @return
      */
-    public int signInUser(String email, String password, String user){
+    public int signInUser(String email, String password, String user) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException{
                     System.out.println(user);
-                    String pwd = password ;  //encrypt here
+                    String pwd = ed.encryptData(password) ;  //encrypt here
                     long c =0 ;
                     if(user.equals("student")){
                                 student = auth.getCollection("student");
